@@ -389,7 +389,6 @@
         <div class="submit-section">
             <button id="submitButton" class="submit-button" disabled onclick="submitBracket()">Submit Bracket</button>
             <button id="saveButton" class="save-button" disabled onclick="saveBracket()">Download as Image</button>
-            <button id="shareButton" class="share-button" disabled onclick="shareBracket()">Share Bracket</button>
         </div>
         
         <div class="download-msg" id="download-msg">
@@ -399,12 +398,6 @@
         <div class="results" id="results">
             <h2>Your Bracket Selections</h2>
             <div id="results-content"></div>
-            
-            <div class="share-url-container" id="share-url-container">
-                <p>Share your bracket with this link:</p>
-                <input type="text" id="share-url" class="share-url" readonly>
-                <button class="copy-btn" onclick="copyShareUrl()">Copy Link</button>
-            </div>
         </div>
         
         <div class="toast" id="toast">Link copied to clipboard!</div>
@@ -419,34 +412,11 @@
         
         // Check for shared data via URL on page load
         window.onload = function() {
-            checkForSharedData();
-            
             // Add html2canvas script dynamically
             const script = document.createElement('script');
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
             document.head.appendChild(script);
         };
-        
-        // Check if we have data in URL parameters
-        function checkForSharedData() {
-            // Check URL parameters for shared brackets
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('data')) {
-                try {
-                    const sharedData = JSON.parse(atob(urlParams.get('data')));
-                    if (sharedData && sharedData.username && sharedData.matchups) {
-                        username = sharedData.username;
-                        document.getElementById('username').value = username;
-                        document.getElementById('username-display').textContent = `Welcome, ${username}!`;
-                        
-                        // Load the matchups
-                        loadMatchupsFromData(sharedData.matchups);
-                    }
-                } catch (e) {
-                    console.error("Error parsing shared data:", e);
-                }
-            }
-        }
         
         // Load matchups from saved/shared data
         function loadMatchupsFromData(savedMatchups) {
@@ -759,7 +729,6 @@
             // Enable/disable buttons
             document.getElementById('submitButton').disabled = !isComplete;
             document.getElementById('saveButton').disabled = matchups.length === 0 || !isComplete;
-            document.getElementById('shareButton').disabled = !isComplete || !bracketSubmitted;
         }
         
         // Save bracket as an image
@@ -800,38 +769,7 @@
             }, 5000);
         }
         
-        // Create shareable URL
-        function shareBracket() {
-            // Create the data to encode in the URL
-            const shareData = {
-                username: username,
-                matchups: matchups
-            };
-            
-            // Encode the data
-            const encodedData = btoa(JSON.stringify(shareData));
-            const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
-            
-            // Show the URL in the share container
-            const shareContainer = document.getElementById('share-url-container');
-            const shareUrlInput = document.getElementById('share-url');
-            
-            shareUrlInput.value = shareUrl;
-            shareContainer.style.display = 'block';
-            
-            // Scroll to the container
-            shareContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Copy the share URL to clipboard
-        function copyShareUrl() {
-            const shareUrlInput = document.getElementById('share-url');
-            shareUrlInput.select();
-            document.execCommand('copy');
-            
-            // Show success toast
-            showToast("Link copied to clipboard!");
-        }
+        // Removed share bracket functionality
         
         // Show a toast message
         function showToast(message) {
@@ -846,6 +784,7 @@
         }
         
         // Submit the bracket
+        // No need for share bracket functionality
         function submitBracket() {
             // Mark as submitted
             bracketSubmitted = true;
@@ -885,13 +824,11 @@
             
             resultsContent.innerHTML = html;
             
-            // Enable the share button now that the bracket is submitted
-            document.getElementById('shareButton').disabled = false;
+            // Enable save button
+            document.getElementById('saveButton').disabled = false;
             
             // Scroll to results
             resultsDiv.scrollIntoView({ behavior: 'smooth' });
-            
-            // No longer saving to localStorage
         }
         
         // Helper function to get readable method text

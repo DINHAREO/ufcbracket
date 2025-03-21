@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UFC Fighter Bracket Tool</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .user-info {
+            background-color: #2c2c2c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info input {
+            flex-grow: 1;
+            padding: 8px;
+            border-radius: 4px;
+            background-color: #333;
+            border: 1px solid #555;
+            color: #fff;
+        }
+        
+        .username-display {
+            color: #f1c40f;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #d20a0a;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+        
+        .user-info {
+            background-color: #2c2c2c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .controls {
+            background-color: #2c2c2c;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .control-group {
+            flex: 1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+        
+        input, button {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            background-color: #333;
+            border: 1px solid #555;
+            color: #fff;
+        }
+        
+        .brackets-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background-color: #111;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+        
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background-color: #333;
+        }
+        
+        .add-btn {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .add-btn:hover {
+            background-color: #225e26;
+        }
+        
+        .choice-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .btn {
+            background-color: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            min-width: 30px;
+            text-align: center;
+            width: auto;
+        }
+        
+        .btn:hover {
+            background-color: #444;
+        }
+        
+        .btn.selected {
+            background-color: #d20a0a;
+            border-color: #d20a0a;
+        }
+        
+        select {
+            background-color: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+            width: 100%;
+        }
+        
+        select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .remove-btn {
+            background-color: #b71c1c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: auto;
+        }
+        
+        .remove-btn:hover {
+            background-color: #8b1515;
+        }
+        
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .submit-button, .save-button, .share-button {
+            background-color: #d20a0a;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+        }
+        
+        .save-button {
+            background-color: #2980b9;
+        }
+        
+        .share-button {
+            background-color: #27ae60;
+        }
+        
+        .download-msg {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .submit-button:hover {
+            background-color: #aa0808;
+        }
+        
+        .save-button:hover {
+            background-color: #1c638e;
+        }
+        
+        .share-button:hover {
+            background-color: #1e8449;
+        }
+        
+        .submit-button:disabled, .save-button:disabled, .share-button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        
+        .results {
+            padding: 20px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .results h2 {
+            color: #f1c40f;
+            margin-top: 0;
+        }
+        
+        .winner-info {
+            color: #d20a0a;
+            font-weight: bold;
+        }
+        
+        .share-url-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #333;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .share-url-container p {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #f1c40f;
+        }
+        
+        .share-url {
+            width: 100%;
+            padding: 10px;
+            background-color: #222;
+            border: 1px solid #555;
+            color: #fff;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .copy-btn {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .copy-btn:hover {
+            background-color: #1c638e;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>UFC Fighter Bracket</h1>
+            <div class="subtitle">Create and fill out fighter matchup brackets</div>
+        </header>
+        
+        <div class="user-info">
+            <label for="username"><strong>Your Username:</strong></label>
+            <input type="text" id="username" placeholder="Enter your username">
+            <button class="btn" onclick="saveUsername()">Save</button>
+            <span id="username-display" class="username-display"></span>
+        </div>
+        
+        <div class="controls">
+            <h3>Add New Matchup</h3>
+            <div class="control-row">
+                <div class="control-group">
+                    <label for="fighter-a">Fighter A</label>
+                    <input type="text" id="fighter-a" placeholder="Fighter A Name">
+                </div>
+                <div class="control-group">
+                    <label for="fighter-b">Fighter B</label>
+                    <input type="text" id="fighter-b" placeholder="Fighter B Name">
+                </div>
+                <div class="control-group">
+                    <label>&nbsp;</label>
+                    <button class="add-btn" onclick="addMatchup()">Add Matchup</button>
+                </div>
+            </div>
+        </div>
+        
+        <table class="brackets-table" id="brackets-table">
+            <thead>
+                <tr>
+                    <th width="5%">#</th>
+                    <th width="20%">Fighter A</th>
+                    <th width="20%">Fighter B</th>
+                    <th width="15%">Winner</th>
+                    <th width="15%">Method</th>
+                    <th width="15%">Round/Decision</th>
+                    <th width="10%">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="brackets-body">
+                <tr class="no-data">
+                    <td colspan="7">No matchups added yet. Add fighters above to get started.</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="submit-section">
+            <button id="submitButton" class="submit-button" disabled onclick="submitBracket()">Submit Bracket</button>
+            <button id="saveButton" class="save-button" disabled onclick="saveBracket()">Download as Image</button>
+            <button id="shareButton" class="share-button" disabled onclick="shareBracket()">Share Bracket</button>
+        </div>
+        
+        <div class="download-msg" id="download-msg">
+            <p>Your bracket will be downloaded as an image file. If the download doesn't start automatically, check your browser's download settings.</p>
+        </div>
+        
+        <div class="results" id="results">
+            <h2>Your Bracket Selections</h2>
+            <div id="results-content"></div>
+            
+            <div class="share-url-container" id="share-url-container">
+                <p>Share your bracket with this link:</p>
+                <input type="text" id="share-url" class="share-url" readonly>
+                <button class="copy-btn" onclick="copyShareUrl()">Copy Link</button>
+            </div>
+        </div>
+        
+        <div class="toast" id="toast">Link copied to clipboard!</div>
+    </div>
+    
+    <script>
+        // Track all matchups and selections
+        let matchups = [];
+        let nextMatchupId = 1;
+        let username = "";
+        let bracketSubmitted = false;
+        
+        // Check for shared data via URL on page load
+        window.onload = function() {
+            checkForSharedData();
+            
+            // Add html2canvas script dynamically
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            document.head.appendChild(script);
+        };
+        
+        // Check if we have data in URL parameters
+        function checkForSharedData() {
+            // Check URL parameters for shared brackets
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('data')) {
+                try {
+                    const sharedData = JSON.parse(atob(urlParams.get('data')));
+                    if (sharedData && sharedData.username && sharedData.matchups) {
+                        username = sharedData.username;
+                        document.getElementById('username').value = username;
+                        document.getElementById('username-display').textContent = `Welcome, ${username}!`;
+                        
+                        // Load the matchups
+                        loadMatchupsFromData(sharedData.matchups);
+                    }
+                } catch (e) {
+                    console.error("Error parsing shared data:", e);
+                }
+            }
+        }
+        
+        // Load matchups from saved/shared data
+        function loadMatchupsFromData(savedMatchups) {
+            // Clear existing matchups
+            matchups = [];
+            document.getElementById('brackets-body').innerHTML = '';
+            
+            // Find the highest ID to set nextMatchupId correctly
+            let maxId = 0;
+            
+            // Add each matchup
+            savedMatchups.forEach(matchup => {
+                matchups.push(matchup);
+                addMatchupRow(matchup);
+                
+                // Update selections if any
+                if (matchup.winner) {
+                    // Update UI for winner
+                    const row = document.querySelector(`tr[data-matchup="${matchup.id}"]`);
+                    const buttons = row.querySelectorAll('.choice-buttons .btn');
+                    buttons.forEach((btn, index) => {
+                        if ((index === 0 && matchup.winner === 'A') || (index === 1 && matchup.winner === 'B')) {
+                            btn.classList.add('selected');
+                        }
+                    });
+                    
+                    // Update method and round
+                    const methodEl = document.getElementById(`method-${matchup.id}`);
+                    const roundEl = document.getElementById(`round-${matchup.id}`);
+                    
+                    if (methodEl && roundEl) {
+                        methodEl.disabled = false;
+                        roundEl.disabled = false;
+                        
+                        if (matchup.method) {
+                            methodEl.value = matchup.method;
+                        }
+                        
+                        if (matchup.round) {
+                            roundEl.value = matchup.round;
+                        }
+                    }
+                }
+                
+                // Keep track of highest ID
+                if (matchup.id > maxId) {
+                    maxId = matchup.id;
+                }
+            });
+            
+            // Set next ID
+            nextMatchupId = maxId + 1;
+            
+            // Check submission status
+            checkSubmissionStatus();
+            
+            // If we've loaded completed brackets, auto-submit them
+            const allComplete = matchups.length > 0 && matchups.every(m => 
+                m.winner && m.method && m.round);
+            
+            if (allComplete) {
+                submitBracket();
+            }
+        }
+        
+        // Save username
+        function saveUsername() {
+            const usernameInput = document.getElementById('username').value.trim();
+            if (usernameInput) {
+                username = usernameInput;
+                document.getElementById('username-display').textContent = `Welcome, ${username}!`;
+                
+                // Save to localStorage
+                saveBracketToLocalStorage();
+            }
+        }
+        
+        // Add a new matchup to the table
+        function addMatchup() {
+            // Get fighter information
+            const fighterA = document.getElementById('fighter-a').value.trim();
+            const fighterB = document.getElementById('fighter-b').value.trim();
+            
+            // Validate inputs
+            if (!fighterA || !fighterB) {
+                alert('Please enter names for both fighters');
+                return;
+            }
+            
+            // Create the matchup data
+            const matchupId = nextMatchupId++;
+            const newMatchup = {
+                id: matchupId,
+                fighterA: {
+                    name: fighterA
+                },
+                fighterB: {
+                    name: fighterB
+                },
+                winner: null,
+                method: null,
+                round: null
+            };
+            
+            // Add to our matchups array
+            matchups.push(newMatchup);
+            
+            // Clear the no-data message if present
+            const noDataRow = document.querySelector('.no-data');
+            if (noDataRow) {
+                noDataRow.remove();
+            }
+            
+            // Add the row to the table
+            addMatchupRow(newMatchup);
+            
+            // Clear the input fields
+            document.getElementById('fighter-a').value = '';
+            document.getElementById('fighter-b').value = '';
+            
+            // Focus back on first field
+            document.getElementById('fighter-a').focus();
+            
+            // No longer saving to localStorage
+        }
+        
+        // Add a matchup row to the table
+        function addMatchupRow(matchup) {
+            const tbody = document.getElementById('brackets-body');
+            const row = document.createElement('tr');
+            row.setAttribute('data-matchup', matchup.id);
+            
+            row.innerHTML = `
+                <td>${matchup.id}</td>
+                <td>
+                    <div class="fighter-name">${matchup.fighterA.name}</div>
+                </td>
+                <td>
+                    <div class="fighter-name">${matchup.fighterB.name}</div>
+                </td>
+                <td>
+                    <div class="choice-buttons">
+                        <button class="btn" onclick="selectWinner(${matchup.id}, 'A')">A</button>
+                        <button class="btn" onclick="selectWinner(${matchup.id}, 'B')">B</button>
+                    </div>
+                </td>
+                <td>
+                    <select id="method-${matchup.id}" disabled onchange="updateSelection(${matchup.id})">
+                        <option value="">Method</option>
+                        <option value="KO">KO</option>
+                        <option value="TKO">TKO</option>
+                        <option value="SUB">Submission</option>
+                        <option value="DEC">Decision</option>
+                        <option value="DQ">DQ</option>
+                    </select>
+                </td>
+                <td>
+                    <select id="round-${matchup.id}" disabled onchange="updateSelection(${matchup.id})">
+                        <option value="">Round/Type</option>
+                        <option value="R1">Round 1</option>
+                        <option value="R2">Round 2</option>
+                        <option value="R3">Round 3</option>
+                        <option value="R4">Round 4</option>
+                        <option value="R5">Round 5</option>
+                        <option value="UD">Unanimous</option>
+                        <option value="SD">Split</option>
+                        <option value="MD">Majority</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="remove-btn" onclick="removeMatchup(${matchup.id})">Remove</button>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+        }
+        
+        // Remove a matchup
+        function removeMatchup(matchupId) {
+            // Remove from the array
+            matchups = matchups.filter(m => m.id !== matchupId);
+            
+            // Remove from the table
+            const row = document.querySelector(`tr[data-matchup="${matchupId}"]`);
+            if (row) {
+                row.remove();
+            }
+            
+            // Add the "no data" message if no matchups remain
+            if (matchups.length === 0) {
+                const tbody = document.getElementById('brackets-body');
+                const noDataRow = document.createElement('tr');
+                noDataRow.className = 'no-data';
+                noDataRow.innerHTML = '<td colspan="7">No matchups added yet. Add fighters above to get started.</td>';
+                tbody.appendChild(noDataRow);
+                
+                // Disable submit button
+                document.getElementById('submitButton').disabled = true;
+            } else {
+                // Check submission status
+                checkSubmissionStatus();
+            }
+            
+            // Save changes
+            saveBracketToLocalStorage();
+        }
+        
+        // Select winner for a matchup
+        function selectWinner(matchupId, fighter) {
+            // Find the matchup
+            const matchup = matchups.find(m => m.id === matchupId);
+            if (!matchup) return;
+            
+            // Get the row and buttons
+            const row = document.querySelector(`tr[data-matchup="${matchupId}"]`);
+            const buttons = row.querySelectorAll('.choice-buttons .btn');
+            
+            // Update UI
+            buttons.forEach((btn, index) => {
+                if ((index === 0 && fighter === 'A') || (index === 1 && fighter === 'B')) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+            
+            // Update data
+            matchup.winner = fighter;
+            
+            // Enable method and round selectors
+            document.getElementById(`method-${matchupId}`).disabled = false;
+            document.getElementById(`round-${matchupId}`).disabled = false;
+            
+            // If method and round were previously set, keep them
+            if (!matchup.method) {
+                document.getElementById(`method-${matchupId}`).value = '';
+                document.getElementById(`round-${matchupId}`).value = '';
+            }
+            
+            // Save changes
+            saveBracketToLocalStorage();
+            
+            checkSubmissionStatus();
+        }
+        
+        // Update method or round selection
+        function updateSelection(matchupId) {
+            const matchup = matchups.find(m => m.id === matchupId);
+            if (!matchup) return;
+            
+            const methodEl = document.getElementById(`method-${matchupId}`);
+            const roundEl = document.getElementById(`round-${matchupId}`);
+            
+            matchup.method = methodEl.value;
+            matchup.round = roundEl.value;
+            
+            // Show/hide appropriate round options based on method
+            if (methodEl.value === "DEC") {
+                // Show only decision options
+                Array.from(roundEl.options).forEach(option => {
+                    if (option.value === "" || option.value === "UD" || option.value === "SD" || option.value === "MD") {
+                        option.style.display = "block";
+                    } else {
+                        option.style.display = "none";
+                    }
+                });
+                
+                // If current selection is a round, reset it
+                if (roundEl.value.startsWith("R")) {
+                    roundEl.value = "";
+                    matchup.round = "";
+                }
+            } else if (methodEl.value !== "") {
+                // Show only round options
+                Array.from(roundEl.options).forEach(option => {
+                    if (option.value === "" || option.value.startsWith("R")) {
+                        option.style.display = "block";
+                    } else {
+                        option.style.display = "none";
+                    }
+                });
+                
+                // If current selection is a decision, reset it
+                if (["UD", "SD", "MD"].includes(roundEl.value)) {
+                    roundEl.value = "";
+                    matchup.round = "";
+                }
+            } else {
+                // Show all options
+                Array.from(roundEl.options).forEach(option => {
+                    option.style.display = "block";
+                });
+            }
+            
+            checkSubmissionStatus();
+        }
+        
+        // Check if all required fields are completed
+        function checkSubmissionStatus() {
+            let isComplete = matchups.length > 0;
+            
+            // Check if all matchups have complete data
+            for (const matchup of matchups) {
+                if (!matchup.winner || !matchup.method || !matchup.round) {
+                    isComplete = false;
+                    break;
+                }
+            }
+            
+            // Enable/disable buttons
+            document.getElementById('submitButton').disabled = !isComplete;
+            document.getElementById('saveButton').disabled = matchups.length === 0 || !isComplete;
+            document.getElementById('shareButton').disabled = !isComplete || !bracketSubmitted;
+        }
+        
+        // Save bracket as an image
+        function saveBracketToImage() {
+            // First make sure results are displayed
+            if (!bracketSubmitted) {
+                submitBracket();
+            }
+            
+            // Use html2canvas to capture the results section
+            const resultsSection = document.getElementById('results');
+            
+            // Add a temporary class to style for better image capture
+            resultsSection.classList.add('capture-mode');
+            
+            // Use html2canvas library to create an image
+            html2canvas(resultsSection).then(canvas => {
+                // Remove the temporary class
+                resultsSection.classList.remove('capture-mode');
+                
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `UFC_Bracket_${username || 'Anonymous'}_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+        
+        // Save bracket explicitly (when button is clicked)
+        function saveBracket() {
+            saveBracketToImage();
+            showToast("Downloading bracket as image...");
+            
+            // Show download message
+            document.getElementById('download-msg').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('download-msg').style.display = 'none';
+            }, 5000);
+        }
+        
+        // Create shareable URL
+        function shareBracket() {
+            // Create the data to encode in the URL
+            const shareData = {
+                username: username,
+                matchups: matchups
+            };
+            
+            // Encode the data
+            const encodedData = btoa(JSON.stringify(shareData));
+            const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
+            
+            // Show the URL in the share container
+            const shareContainer = document.getElementById('share-url-container');
+            const shareUrlInput = document.getElementById('share-url');
+            
+            shareUrlInput.value = shareUrl;
+            shareContainer.style.display = 'block';
+            
+            // Scroll to the container
+            shareContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Copy the share URL to clipboard
+        function copyShareUrl() {
+            const shareUrlInput = document.getElementById('share-url');
+            shareUrlInput.select();
+            document.execCommand('copy');
+            
+            // Show success toast
+            showToast("Link copied to clipboard!");
+        }
+        
+        // Show a toast message
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Submit the bracket
+        function submitBracket() {
+            // Mark as submitted
+            bracketSubmitted = true;
+            
+            // Show results section
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('results-content');
+            resultsDiv.style.display = 'block';
+            
+            // Gather results
+            let html = '';
+            
+            // Add username if available
+            if (username) {
+                html += `<div style="margin-bottom: 20px;"><strong>Bracket by:</strong> <span class="winner-info">${username}</span></div>`;
+            }
+            
+            html += '<table width="100%">';
+            html += '<tr><th>#</th><th>Matchup</th><th>Winner</th><th>Method</th><th>Details</th></tr>';
+            
+            matchups.forEach(matchup => {
+                const winnerName = matchup.winner === 'A' ? matchup.fighterA.name : matchup.fighterB.name;
+                const matchupText = `${matchup.fighterA.name} vs ${matchup.fighterB.name}`;
+                const method = getMethodText(matchup.method);
+                const round = getRoundText(matchup.round);
+                
+                html += `<tr>
+                    <td>${matchup.id}</td>
+                    <td>${matchupText}</td>
+                    <td class="winner-info">${winnerName}</td>
+                    <td>${method}</td>
+                    <td>${round}</td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            
+            resultsContent.innerHTML = html;
+            
+            // Enable the share button now that the bracket is submitted
+            document.getElementById('shareButton').disabled = false;
+            
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            
+            // No longer saving to localStorage
+        }
+        
+        // Helper function to get readable method text
+        function getMethodText(code) {
+            const methods = {
+                'KO': 'Knockout',
+                'TKO': 'Technical Knockout',
+                'SUB': 'Submission',
+                'DEC': 'Decision',
+                'DQ': 'Disqualification'
+            };
+            return methods[code] || code;
+        }
+        
+        // Helper function to get readable round text
+        function getRoundText(code) {
+            if (code.startsWith('R')) {
+                return `Round ${code.substring(1)}`;
+            }
+            
+            const decisions = {
+                'UD': 'Unanimous Decision',
+                'SD': 'Split Decision',
+                'MD': 'Majority Decision'
+            };
+            return decisions[code] || code;
+        }
+    </script>
+</body>
+</html>

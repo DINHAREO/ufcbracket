@@ -497,7 +497,8 @@
 
         // Populate hidden fields
         document.getElementById('form-username').value = username || 'Anonymous'; // Use username or default
-        document.getElementById('form-bracket-data').value = JSON.stringify(matchups);
+        // Format JSON with indentation (2 spaces)
+        document.getElementById('form-bracket-data').value = JSON.stringify(matchups, null, 2);
 
         // Display results locally like before
         submitBracket();

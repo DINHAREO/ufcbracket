@@ -6,123 +6,212 @@
     <title>UFC Bracket Maker</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        /* --- Color Variables --- */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f4f4f4;
+            --bg-tertiary: #f9f9f9;
+            --bg-accent: #e9ecef; /* Used for share url background */
+            --bg-success-light: #d4edda;
+            --text-primary: #333333;
+            --text-secondary: #555555;
+            --text-on-primary-brand: #ffffff;
+            --text-success: #155724;
+            --text-winner: #1a7d32;
+            --border-primary: #dddddd;
+            --border-secondary: #cccccc;
+            --border-light: #eeeeee;
+            --brand-primary: #e03a3e; /* UFC Red */
+            --brand-primary-darker: #b82e31;
+            --brand-primary-lighter: #ffe8e8;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --button-disabled-bg: #cccccc;
+            --button-disabled-text: #666666;
+            --toast-bg: #333333;
+            --toast-text: #ffffff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #1a1a1a;        /* Dark grey */
+                --bg-secondary: #111111;     /* Very dark grey / near black */
+                --bg-tertiary: #2a2a2a;       /* Slightly lighter dark grey */
+                --bg-accent: #333333;        /* Medium dark grey */
+                --bg-success-light: #1c4a2f; /* Darker green */
+                --text-primary: #e0e0e0;       /* Light grey */
+                --text-secondary: #aaaaaa;    /* Medium grey */
+                --text-on-primary-brand: #ffffff;
+                --text-success: #a3e9b8;      /* Lighter green */
+                --text-winner: #58d68d;       /* Brighter Green */
+                --border-primary: #444444;      /* Darker border */
+                --border-secondary: #555555;   /* Darker border */
+                --border-light: #333333;      /* Darker border */
+                --brand-primary: #e5484d; /* Slightly brighter red for dark mode */
+                --brand-primary-darker: #f05f63;
+                --brand-primary-lighter: #4d2729;
+                --shadow-color: rgba(255, 255, 255, 0.05);
+                --button-disabled-bg: #444444;
+                --button-disabled-text: #aaaaaa;
+                --toast-bg: #eeeeee;
+                --toast-text: #111111;
+            }
+        }
+        /* --- --- */
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
             line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
         }
         .container {
             max-width: 800px;
             margin: auto;
-            background: #fff;
+            background: var(--bg-primary);
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px var(--shadow-color);
             margin-bottom: 20px;
+            border: 1px solid var(--border-primary);
+            transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
         }
         h1, h2, h3 {
-            color: #e03a3e; /* UFC Red */
+            color: var(--brand-primary);
             text-align: center;
             margin-bottom: 20px;
         }
         h1 {
             font-size: 2.5em;
+            margin-bottom: 30px; /* More space below main title */
         }
         h2 {
-            border-bottom: 2px solid #eee;
+            border-bottom: 2px solid var(--border-light);
             padding-bottom: 10px;
-            margin-top: 30px;
+            margin-top: 40px; /* More space above section titles */
+        }
+        h3 {
+             /* Matchup specific h3 */
+             color: var(--text-primary); /* Use primary text color for matchup title */
+             text-align: left;
+             font-size: 1.3em; /* Slightly larger matchup title */
+             border-bottom: 1px solid var(--border-light);
+             padding-bottom: 10px; /* Increased padding */
+             margin-bottom: 20px; /* Space below matchup title */
+             transition: color 0.3s ease, border-color 0.3s ease;
         }
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px; /* Slightly more space */
             font-weight: bold;
-            color: #555;
+            color: var(--text-secondary);
+             transition: color 0.3s ease;
         }
         input[type="text"],
         input[type="number"],
         select {
-            width: calc(100% - 22px); /* Adjust for padding and border */
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            width: calc(100% - 24px); /* Adjust for padding and border */
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid var(--border-secondary);
+            border-radius: 5px; /* Slightly more rounded */
             font-size: 1em;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 2px var(--brand-primary-lighter);
         }
         select {
              width: 100%;
         }
         button {
             display: inline-block;
-            background-color: #e03a3e; /* UFC Red */
-            color: white;
+            background-color: var(--brand-primary);
+            color: var(--text-on-primary-brand);
             padding: 12px 25px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
+            font-size: 1.05em; /* Slightly larger button text */
+            font-weight: 500; /* Medium weight */
+            transition: background-color 0.2s ease, transform 0.1s ease;
             margin-right: 10px;
             margin-bottom: 10px; /* Add space below buttons */
             width: auto; /* Fit content */
         }
-        button:hover {
-            background-color: #b82e31; /* Darker Red */
+        button:hover:not(:disabled) {
+            background-color: var(--brand-primary-darker);
+            transform: translateY(-1px); /* Slight lift on hover */
         }
+         button:active:not(:disabled) {
+             transform: translateY(0px); /* Press down effect */
+         }
         button:disabled {
-            background-color: #ccc;
+            background-color: var(--button-disabled-bg);
+            color: var(--button-disabled-text);
             cursor: not-allowed;
+            transform: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .matchup {
-            background-color: #f9f9f9;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
+            background-color: var(--bg-tertiary);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-primary);
             border-radius: 6px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .matchup h3 {
             margin-top: 0;
-            color: #333;
-            text-align: left;
-            font-size: 1.2em;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
+            /* Already styled above */
         }
         .fighter-selection {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            gap: 15px; /* Add gap between fighter labels */
         }
         .fighter-selection label {
+            flex: 1; /* Make labels take equal space */
             display: flex;
             flex-direction: column;
             align-items: center;
             cursor: pointer;
-            padding: 10px;
-            border: 2px solid transparent;
+            padding: 15px; /* More padding */
+            border: 2px solid var(--border-primary); /* Visible border */
             border-radius: 5px;
+            background-color: var(--bg-primary);
             transition: border-color 0.3s ease, background-color 0.3s ease;
         }
         .fighter-selection input[type="radio"] {
             display: none; /* Hide the actual radio button */
         }
         .fighter-selection input[type="radio"]:checked + span {
-            border-color: #e03a3e; /* UFC Red */
-            background-color: #ffe8e8;
+             font-weight: bold;
+        }
+        .fighter-selection label:has(input[type="radio"]:checked) { /* Style the whole label when checked */
+             border-color: var(--brand-primary); /* UFC Red */
+             background-color: var(--brand-primary-lighter);
         }
         .fighter-selection span {
             display: block;
-            padding: 8px 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 0; /* Remove padding here, added to label */
+            border: none; /* Remove border here, added to label */
+            font-size: 1.1em;
+            text-align: center;
         }
         .selection-details {
             display: flex;
-            gap: 15px; /* Add space between dropdowns */
-            margin-top: 15px;
+            gap: 20px; /* More space between dropdowns */
+            margin-top: 20px;
         }
         .selection-details > div {
             flex: 1; /* Make dropdowns take equal space */
@@ -130,101 +219,122 @@
         .results-table, #results table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 25px;
         }
         .results-table th, .results-table td,
         #results th, #results td {
-            border: 1px solid #ddd;
-            padding: 10px;
+            border: 1px solid var(--border-primary);
+            padding: 12px;
             text-align: left;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .results-table th, #results th {
-            background-color: #e03a3e;
-            color: white;
+            background-color: var(--brand-primary);
+            color: var(--text-on-primary-brand);
             font-weight: bold;
         }
         .results-table tr:nth-child(even),
         #results tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: var(--bg-tertiary);
         }
         .winner-info {
             font-weight: bold;
-            color: #28a745; /* Green for winner */
+            color: var(--text-winner);
+            transition: color 0.3s ease;
         }
         .action-buttons {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 35px;
         }
         #toast {
             position: fixed;
-            bottom: 20px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
+            background-color: var(--toast-bg);
+            color: var(--toast-text);
+            padding: 12px 25px;
             border-radius: 5px;
             display: none;
             z-index: 1000;
-            font-size: 0.9em;
+            font-size: 0.95em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         #share-url-container {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9ecef;
+            margin-top: 25px;
+            padding: 20px;
+            background-color: var(--bg-accent);
+            border: 1px solid var(--border-primary);
             border-radius: 5px;
             display: none; /* Hidden by default */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         #share-url-container input {
-            width: calc(100% - 100px); /* Adjust width for button */
+            width: calc(100% - 115px); /* Adjust width for button */
             margin-right: 10px;
+            /* Inherit styles from general input */
         }
         #share-url-container button {
-            width: 80px; /* Fixed width for copy button */
-            padding: 10px 0; /* Adjust padding */
+            width: 90px; /* Fixed width for copy button */
+            padding: 12px 0; /* Adjust padding */
+             /* Inherit styles from general button */
         }
         #download-msg {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #d4edda; /* Light green */
-            color: #155724; /* Dark green */
-            border: 1px solid #c3e6cb;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: var(--bg-success-light);
+            color: var(--text-success);
+            border: 1px solid var(--border-primary);
             border-radius: 4px;
             text-align: center;
             display: none; /* Hidden by default */
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         /* Styles for image capture */
         .capture-mode {
             box-shadow: none !important;
-            border: 1px solid #ccc;
+            border: 1px solid var(--border-secondary) !important; /* Use secondary border for capture */
             padding: 20px; /* Ensure padding is included */
-            background-color: #ffffff !important; /* Ensure white background */
+            background-color: var(--bg-primary) !important; /* Ensure correct background */
         }
         .capture-mode h2, .capture-mode h3 {
             text-align: center; /* Center titles for image */
+            color: var(--brand-primary) !important;
         }
         .capture-mode table th {
-            background-color: #e03a3e !important; /* Ensure header background */
-            color: white !important;
+            background-color: var(--brand-primary) !important; /* Ensure header background */
+            color: var(--text-on-primary-brand) !important;
         }
         .capture-mode td, .capture-mode th {
-            border: 1px solid #ddd !important;
+            border: 1px solid var(--border-primary) !important;
+            color: var(--text-primary) !important; /* Ensure text color */
+        }
+         .capture-mode tr:nth-child(even) {
+            background-color: var(--bg-tertiary) !important;
         }
         .capture-mode .winner-info {
-             color: #28a745 !important; /* Ensure winner color */
+             color: var(--text-winner) !important; /* Ensure winner color */
         }
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
             .container {
-                padding: 20px;
+                padding: 15px;
             }
             h1 {
                 font-size: 2em;
             }
+            h3 {
+                font-size: 1.15em;
+            }
             button {
                 width: 100%; /* Full width buttons on smaller screens */
                 margin-right: 0; /* Remove right margin */
+                padding: 14px 20px; /* Slightly larger padding */
             }
             .fighter-selection {
                 flex-direction: column;
@@ -241,15 +351,16 @@
                 margin-bottom: 15px; /* Add space below stacked dropdowns */
             }
             #share-url-container input {
-                width: calc(100% - 22px); /* Full width input */
+                width: calc(100% - 24px); /* Full width input */
                 margin-bottom: 10px;
+                margin-right: 0;
             }
              #share-url-container button {
                 width: 100%; /* Full width button */
             }
             .results-table th, .results-table td,
             #results th, #results td {
-                font-size: 0.9em; /* Slightly smaller text in table */
+                font-size: 0.85em; /* Smaller text in table */
                 padding: 8px;
             }
         }

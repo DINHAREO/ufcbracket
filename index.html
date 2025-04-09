@@ -505,9 +505,10 @@
 
  // Load bracket data from Local Storage
  function loadFromLocalStorage() {
-    const savedUsername = localStorage.getItem('ufcBracketUsername');
-    const savedMatchups = localStorage.getItem('ufcBracketMatchups');
-    const savedSubmitted = localStorage.getItem('ufcBracketSubmitted');
+    // Use sessionStorage instead of localStorage
+    const savedUsername = sessionStorage.getItem('ufcBracketUsername');
+    const savedMatchups = sessionStorage.getItem('ufcBracketMatchups');
+    const savedSubmitted = sessionStorage.getItem('ufcBracketSubmitted');
 
     if (savedUsername) {
         username = savedUsername;
@@ -537,11 +538,12 @@
 
  // Save bracket data to Local Storage
  function saveBracketToLocalStorage() {
+    // Use sessionStorage instead of localStorage
     if (username) {
-        localStorage.setItem('ufcBracketUsername', username);
+        sessionStorage.setItem('ufcBracketUsername', username);
     }
-    localStorage.setItem('ufcBracketMatchups', JSON.stringify(matchups));
-    localStorage.setItem('ufcBracketSubmitted', bracketSubmitted);
+    sessionStorage.setItem('ufcBracketMatchups', JSON.stringify(matchups));
+    sessionStorage.setItem('ufcBracketSubmitted', bracketSubmitted);
  }
 
  // Set the username

@@ -3,922 +3,801 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UFC Fighter Bracket Tool</title>
+    <title>UFC Bracket Maker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #1a1a1a;
-            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
         }
-        
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        
-        .user-info {
-            background-color: #2c2c2c;
-            padding: 15px;
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
             border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
         }
-        
-        .user-info input {
-            flex-grow: 1;
-            padding: 8px;
-            border-radius: 4px;
-            background-color: #333;
-            border: 1px solid #555;
-            color: #fff;
-        }
-        
-        .username-display {
-            color: #f1c40f;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        
-        header {
+        h1, h2, h3 {
+            color: #e03a3e; /* UFC Red */
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
-        
         h1 {
-            color: #d20a0a;
-            text-transform: uppercase;
-            font-weight: 900;
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 2.5em;
         }
-        
-        .subtitle {
-            font-size: 16px;
-            color: #888;
-            margin-bottom: 20px;
+        h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 30px;
         }
-        
-        .user-info {
-            background-color: #2c2c2c;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .controls {
-            background-color: #2c2c2c;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .control-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .control-group {
-            flex: 1;
-        }
-        
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            color: #f1c40f;
+            color: #555;
         }
-        
-        input, button {
-            width: 100%;
-            padding: 8px;
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: calc(100% - 22px); /* Adjust for padding and border */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
             border-radius: 4px;
-            background-color: #333;
-            border: 1px solid #555;
-            color: #fff;
+            font-size: 1em;
         }
-        
-        .brackets-table {
+        select {
+             width: 100%;
+        }
+        button {
+            display: inline-block;
+            background-color: #e03a3e; /* UFC Red */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px; /* Add space below buttons */
+            width: auto; /* Fit content */
+        }
+        button:hover {
+            background-color: #b82e31; /* Darker Red */
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .matchup {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        .matchup h3 {
+            margin-top: 0;
+            color: #333;
+            text-align: left;
+            font-size: 1.2em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .fighter-selection {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        .fighter-selection label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+        .fighter-selection input[type="radio"] {
+            display: none; /* Hide the actual radio button */
+        }
+        .fighter-selection input[type="radio"]:checked + span {
+            border-color: #e03a3e; /* UFC Red */
+            background-color: #ffe8e8;
+        }
+        .fighter-selection span {
+            display: block;
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .selection-details {
+            display: flex;
+            gap: 15px; /* Add space between dropdowns */
+            margin-top: 15px;
+        }
+        .selection-details > div {
+            flex: 1; /* Make dropdowns take equal space */
+        }
+        .results-table, #results table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #2c2c2c;
-            border-radius: 8px;
-            overflow: hidden;
+            margin-top: 20px;
         }
-        
-        th {
-            background-color: #111;
+        .results-table th, .results-table td,
+        #results th, #results td {
+            border: 1px solid #ddd;
             padding: 10px;
             text-align: left;
-            font-weight: bold;
-            color: #f1c40f;
         }
-        
-        td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #3a3a3a;
-        }
-        
-        tr:last-child td {
-            border-bottom: none;
-        }
-        
-        tr:hover {
-            background-color: #333;
-        }
-        
-        .add-btn {
-            background-color: #2e7d32;
+        .results-table th, #results th {
+            background-color: #e03a3e;
             color: white;
-            border: none;
-            padding: 10px;
             font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
         }
-        
-        .add-btn:hover {
-            background-color: #225e26;
+        .results-table tr:nth-child(even),
+        #results tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
-        
-        .choice-buttons {
-            display: flex;
-            gap: 5px;
+        .winner-info {
+            font-weight: bold;
+            color: #28a745; /* Green for winner */
         }
-        
-        .btn {
-            background-color: #333;
-            border: 1px solid #555;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            min-width: 30px;
-            text-align: center;
-            width: auto;
-        }
-        
-        .btn:hover {
-            background-color: #444;
-        }
-        
-        .btn.selected {
-            background-color: #d20a0a;
-            border-color: #d20a0a;
-        }
-        
-        select {
-            background-color: #333;
-            border: 1px solid #555;
-            color: #fff;
-            padding: 5px;
-            border-radius: 4px;
-            width: 100%;
-        }
-        
-        select:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .remove-btn {
-            background-color: #b71c1c;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 4px;
-            width: auto;
-        }
-        
-        .remove-btn:hover {
-            background-color: #8b1515;
-        }
-        
-        .submit-section {
+        .action-buttons {
             text-align: center;
             margin-top: 30px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
         }
-        
-        .submit-button, .save-button, .share-button {
-            background-color: #d20a0a;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 4px;
-            cursor: pointer;
-            width: auto;
-        }
-        
-        .save-button {
-            background-color: #2980b9;
-        }
-        
-        .share-button {
-            background-color: #27ae60;
-        }
-        
-        .download-msg {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #2c2c2c;
-            border-radius: 8px;
-            display: none;
-        }
-        
-        .submit-button:hover {
-            background-color: #aa0808;
-        }
-        
-        .save-button:hover {
-            background-color: #1c638e;
-        }
-        
-        .share-button:hover {
-            background-color: #1e8449;
-        }
-        
-        .submit-button:disabled, .save-button:disabled, .share-button:disabled {
-            background-color: #555;
-            cursor: not-allowed;
-        }
-        
-        .results {
-            padding: 20px;
-            background-color: #2c2c2c;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: none;
-        }
-        
-        .results h2 {
-            color: #f1c40f;
-            margin-top: 0;
-        }
-        
-        .winner-info {
-            color: #d20a0a;
-            font-weight: bold;
-        }
-        
-        .share-url-container {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #333;
-            border-radius: 4px;
-            display: none;
-        }
-        
-        .share-url-container p {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #f1c40f;
-        }
-        
-        .share-url {
-            width: 100%;
-            padding: 10px;
-            background-color: #222;
-            border: 1px solid #555;
-            color: #fff;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        
-        .copy-btn {
-            background-color: #2980b9;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .copy-btn:hover {
-            background-color: #1c638e;
-        }
-        
-        .toast {
+        #toast {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #27ae60;
+            background-color: #333;
             color: white;
             padding: 10px 20px;
-            border-radius: 4px;
+            border-radius: 5px;
             display: none;
             z-index: 1000;
+            font-size: 0.9em;
         }
-        
-        .no-data {
+        #share-url-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            display: none; /* Hidden by default */
+        }
+        #share-url-container input {
+            width: calc(100% - 100px); /* Adjust width for button */
+            margin-right: 10px;
+        }
+        #share-url-container button {
+            width: 80px; /* Fixed width for copy button */
+            padding: 10px 0; /* Adjust padding */
+        }
+        #download-msg {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #d4edda; /* Light green */
+            color: #155724; /* Dark green */
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
             text-align: center;
-            padding: 30px;
-            color: #888;
-            font-style: italic;
+            display: none; /* Hidden by default */
+        }
+        /* Styles for image capture */
+        .capture-mode {
+            box-shadow: none !important;
+            border: 1px solid #ccc;
+            padding: 20px; /* Ensure padding is included */
+            background-color: #ffffff !important; /* Ensure white background */
+        }
+        .capture-mode h2, .capture-mode h3 {
+            text-align: center; /* Center titles for image */
+        }
+        .capture-mode table th {
+            background-color: #e03a3e !important; /* Ensure header background */
+            color: white !important;
+        }
+        .capture-mode td, .capture-mode th {
+            border: 1px solid #ddd !important;
+        }
+        .capture-mode .winner-info {
+             color: #28a745 !important; /* Ensure winner color */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            button {
+                width: 100%; /* Full width buttons on smaller screens */
+                margin-right: 0; /* Remove right margin */
+            }
+            .fighter-selection {
+                flex-direction: column;
+                align-items: stretch; /* Stretch items */
+            }
+            .fighter-selection label {
+                margin-bottom: 10px; /* Space between fighters */
+            }
+            .selection-details {
+                flex-direction: column;
+                gap: 0; /* Remove gap when stacked */
+            }
+            .selection-details > div {
+                margin-bottom: 15px; /* Add space below stacked dropdowns */
+            }
+            #share-url-container input {
+                width: calc(100% - 22px); /* Full width input */
+                margin-bottom: 10px;
+            }
+             #share-url-container button {
+                width: 100%; /* Full width button */
+            }
+            .results-table th, .results-table td,
+            #results th, #results td {
+                font-size: 0.9em; /* Slightly smaller text in table */
+                padding: 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>UFC Fighter Bracket</h1>
-            <div class="subtitle">Create and fill out fighter matchup brackets</div>
-        </header>
-        
-        <div class="user-info">
-            <label for="username"><strong>Your Username:</strong></label>
-            <input type="text" id="username" placeholder="Enter your username">
-            <button class="btn" onclick="saveUsername()">Save</button>
-            <span id="username-display" class="username-display"></span>
-        </div>
-        
-        <div class="controls">
-            <h3>Add New Matchup</h3>
-            <div class="control-row">
-                <div class="control-group">
-                    <label for="fighter-a">Fighter A</label>
-                    <input type="text" id="fighter-a" placeholder="Fighter A Name">
-                </div>
-                <div class="control-group">
-                    <label for="fighter-b">Fighter B</label>
-                    <input type="text" id="fighter-b" placeholder="Fighter B Name">
-                </div>
-                <div class="control-group">
-                    <label>&nbsp;</label>
-                    <button class="add-btn" onclick="addMatchup()">Add Matchup</button>
-                </div>
-            </div>
-        </div>
-        
-        <table class="brackets-table" id="brackets-table">
-            <thead>
-                <tr>
-                    <th width="5%">#</th>
-                    <th width="20%">Fighter A</th>
-                    <th width="20%">Fighter B</th>
-                    <th width="15%">Winner</th>
-                    <th width="15%">Method</th>
-                    <th width="15%">Round/Decision</th>
-                    <th width="10%">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="brackets-body">
-                <tr class="no-data">
-                    <td colspan="7">No matchups added yet. Add fighters above to get started.</td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <div class="submit-section">
-            <button id="submitButton" class="submit-button" disabled onclick="submitBracket()">Submit Bracket</button>
-            <button id="saveButton" class="save-button" disabled onclick="saveBracket()">Download as Image</button>
-            <button id="shareButton" class="share-button" disabled onclick="shareBracket()">Share Bracket</button>
-        </div>
-        
-        <div class="download-msg" id="download-msg">
-            <p>Your bracket will be downloaded as an image file. If the download doesn't start automatically, check your browser's download settings.</p>
-        </div>
-        
-        <div class="results" id="results">
-            <h2>Your Bracket Selections</h2>
-            <div id="results-content"></div>
-            
-            <div class="share-url-container" id="share-url-container">
-                <p>Share your bracket with this link:</p>
-                <input type="text" id="share-url" class="share-url" readonly>
-                <button class="copy-btn" onclick="copyShareUrl()">Copy Link</button>
-            </div>
-        </div>
-        
-        <div class="toast" id="toast">Link copied to clipboard!</div>
+
+<!-- Add form tag for Netlify -->
+<form name="bracket-form" id="bracket-submission-form" data-netlify="true" netlify-honeypot="bot-field">
+
+<div class="container">
+    <h1>UFC Bracket Maker</h1>
+
+    <!-- Username Input -->
+    <div id="username-section">
+        <h2>Enter Your Name (Optional)</h2>
+        <label for="username">Your Name:</label>
+        <input type="text" id="username" placeholder="e.g., Dana White">
+        <button onclick="setUsername()">Set Name</button>
     </div>
-    
-    <script>
-        // Track all matchups and selections
-        let matchups = [];
-        let nextMatchupId = 1;
-        let username = "";
-        let bracketSubmitted = false;
-        
-        // Check for shared data via URL on page load
-        window.onload = function() {
-            checkForSharedData();
-            
-            // Add html2canvas script dynamically
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-            document.head.appendChild(script);
+
+    <!-- Fight Card Setup -->
+    <div id="setup-section">
+        <h2>Setup Fight Card</h2>
+        <label for="fighterA">Fighter A:</label>
+        <input type="text" id="fighterA" placeholder="Enter Fighter A's Name">
+
+        <label for="fighterB">Fighter B:</label>
+        <input type="text" id="fighterB" placeholder="Enter Fighter B's Name">
+
+        <button onclick="addMatchup()">Add Matchup</button>
+    </div>
+
+    <!-- Bracket Display -->
+    <div id="bracket-section" style="display: none;">
+        <h2>Make Your Picks</h2>
+        <div id="matchups-list">
+            <!-- Matchups will be dynamically added here -->
+        </div>
+        <div class="action-buttons">
+            <!-- Change button type to submit and remove onclick -->
+            <button type="submit" id="submitButton" disabled>Submit Bracket</button>
+        </div>
+    </div>
+</div>
+
+<!-- Netlify hidden fields -->
+<p style="display:none;"><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
+<input type="hidden" name="form-name" value="bracket-form">
+<input type="hidden" name="username" id="form-username">
+<input type="hidden" name="bracket_data" id="form-bracket-data">
+
+</form> <!-- End Netlify form -->
+
+<!-- Results Display Section -->
+<div id="results" class="container" style="display: none;">
+    <h2>Bracket Results</h2>
+    <div id="results-content">
+        <!-- Results table will be generated here -->
+    </div>
+     <div class="action-buttons">
+         <button id="saveButton" onclick="saveBracket()" disabled>Save Bracket Image</button>
+         <button id="shareButton" onclick="shareBracket()" disabled>Share Bracket Link</button>
+     </div>
+     <div id="download-msg">Your bracket image is downloading...</div>
+     <div id="share-url-container">
+        <label for="share-url">Share this link:</label>
+        <input type="text" id="share-url" readonly>
+        <button onclick="copyShareUrl()">Copy</button>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast"></div>
+
+<script>
+ // Global state variables
+ let matchups = [];
+ let nextMatchupId = 1;
+ let username = '';
+ let bracketSubmitted = false; // Track if the bracket has been submitted
+
+ // Initialization: Check for shared data or load from local storage
+ document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedData = urlParams.get('data');
+
+    if (sharedData) {
+        try {
+            // Decode and parse the shared data
+            const decodedData = JSON.parse(atob(sharedData));
+            if (decodedData.username) {
+                username = decodedData.username;
+                document.getElementById('username').value = username;
+                document.getElementById('username-section').style.display = 'none'; // Hide setup if name exists
+                document.getElementById('setup-section').insertAdjacentHTML('beforebegin', `<h2>Bracket by: ${username}</h2>`);
+            }
+            if (decodedData.matchups && decodedData.matchups.length > 0) {
+                matchups = decodedData.matchups;
+                // Ensure correct nextMatchupId
+                nextMatchupId = Math.max(...matchups.map(m => m.id)) + 1;
+                bracketSubmitted = true; // Assume shared link implies submission
+                renderMatchups();
+                submitBracket(); // Directly display the results from shared link
+                document.getElementById('setup-section').style.display = 'none'; // Hide setup section
+                document.getElementById('bracket-section').style.display = 'none'; // Hide picking section
+            } else {
+                 loadFromLocalStorage(); // Load local if no valid shared data
+            }
+             // Remove the data parameter from URL to prevent re-parsing on refresh/share
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (error) {
+            console.error("Error parsing shared data:", error);
+            showToast("Failed to load shared bracket data.");
+            loadFromLocalStorage(); // Fallback to local storage
+        }
+    } else {
+        loadFromLocalStorage(); // Load from local storage if no shared data
+    }
+    checkSubmissionStatus(); // Initial check
+
+    // Add listener for Netlify form submission
+    const form = document.getElementById('bracket-submission-form');
+    form.addEventListener('submit', (event) => {
+        // Don't let the form submit immediately
+        // event.preventDefault(); // We actually DO want it to submit after this
+
+        // Populate hidden fields
+        document.getElementById('form-username').value = username || 'Anonymous'; // Use username or default
+        document.getElementById('form-bracket-data').value = JSON.stringify(matchups);
+
+        // Display results locally like before
+        submitBracket();
+
+        // Show a confirmation message (optional)
+        showToast("Submitting bracket...");
+
+        // Now the form will submit naturally to Netlify
+        // If we used preventDefault(), we would need form.submit() here.
+    });
+ });
+
+ // Load bracket data from Local Storage
+ function loadFromLocalStorage() {
+    const savedUsername = localStorage.getItem('ufcBracketUsername');
+    const savedMatchups = localStorage.getItem('ufcBracketMatchups');
+    const savedSubmitted = localStorage.getItem('ufcBracketSubmitted');
+
+    if (savedUsername) {
+        username = savedUsername;
+        document.getElementById('username').value = username;
+        // Optionally, hide username section if already set
+        // setUsername();
+    }
+
+    if (savedMatchups) {
+        matchups = JSON.parse(savedMatchups);
+        if (matchups.length > 0) {
+             nextMatchupId = Math.max(...matchups.map(m => m.id)) + 1;
+             document.getElementById('bracket-section').style.display = 'block';
+             renderMatchups();
+        }
+    }
+
+    if (savedSubmitted === 'true') {
+        bracketSubmitted = true;
+        // If already submitted, show results immediately
+        submitBracket();
+        // Optionally hide the setup/picking sections if submitted
+        // document.getElementById('setup-section').style.display = 'none';
+        // document.getElementById('bracket-section').style.display = 'none';
+    }
+ }
+
+ // Save bracket data to Local Storage
+ function saveBracketToLocalStorage() {
+    if (username) {
+        localStorage.setItem('ufcBracketUsername', username);
+    }
+    localStorage.setItem('ufcBracketMatchups', JSON.stringify(matchups));
+    localStorage.setItem('ufcBracketSubmitted', bracketSubmitted);
+ }
+
+ // Set the username
+ function setUsername() {
+    username = document.getElementById('username').value.trim();
+    if (username) {
+        // Optionally hide the username input section after setting
+        // document.getElementById('username-section').style.display = 'none';
+        // Add a display element for the name if needed
+        showToast(`Username set to: ${username}`);
+        saveBracketToLocalStorage(); // Save username
+    } else {
+        showToast("Please enter a valid name.");
+    }
+ }
+
+ // Add a new matchup to the list
+ function addMatchup() {
+    const fighterAInput = document.getElementById('fighterA');
+    const fighterBInput = document.getElementById('fighterB');
+    const fighterA = fighterAInput.value.trim();
+    const fighterB = fighterBInput.value.trim();
+
+    if (fighterA && fighterB) {
+        const newMatchup = {
+            id: nextMatchupId++,
+            fighterA: { name: fighterA },
+            fighterB: { name: fighterB },
+            winner: null, // A or B
+            method: null, // KO, TKO, SUB, DEC, DQ
+            round: null   // R1, R2, R3, R4, R5, UD, SD, MD
         };
-        
-        // Check if we have data in URL parameters
-        function checkForSharedData() {
-            // Check URL parameters for shared brackets
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('data')) {
-                try {
-                    const sharedData = JSON.parse(atob(urlParams.get('data')));
-                    if (sharedData && sharedData.username && sharedData.matchups) {
-                        username = sharedData.username;
-                        document.getElementById('username').value = username;
-                        document.getElementById('username-display').textContent = `Welcome, ${username}!`;
-                        
-                        // Load the matchups
-                        loadMatchupsFromData(sharedData.matchups);
-                    }
-                } catch (e) {
-                    console.error("Error parsing shared data:", e);
-                }
-            }
+        matchups.push(newMatchup);
+
+        // Show bracket section if it's the first matchup
+        if (matchups.length === 1) {
+            document.getElementById('bracket-section').style.display = 'block';
         }
-        
-        // Load matchups from saved/shared data
-        function loadMatchupsFromData(savedMatchups) {
-            // Clear existing matchups
-            matchups = [];
-            document.getElementById('brackets-body').innerHTML = '';
-            
-            // Find the highest ID to set nextMatchupId correctly
-            let maxId = 0;
-            
-            // Add each matchup
-            savedMatchups.forEach(matchup => {
-                matchups.push(matchup);
-                addMatchupRow(matchup);
-                
-                // Update selections if any
-                if (matchup.winner) {
-                    // Update UI for winner
-                    const row = document.querySelector(`tr[data-matchup="${matchup.id}"]`);
-                    const buttons = row.querySelectorAll('.choice-buttons .btn');
-                    buttons.forEach((btn, index) => {
-                        if ((index === 0 && matchup.winner === 'A') || (index === 1 && matchup.winner === 'B')) {
-                            btn.classList.add('selected');
-                        }
-                    });
-                    
-                    // Update method and round
-                    const methodEl = document.getElementById(`method-${matchup.id}`);
-                    const roundEl = document.getElementById(`round-${matchup.id}`);
-                    
-                    if (methodEl && roundEl) {
-                        methodEl.disabled = false;
-                        roundEl.disabled = false;
-                        
-                        if (matchup.method) {
-                            methodEl.value = matchup.method;
-                        }
-                        
-                        if (matchup.round) {
-                            roundEl.value = matchup.round;
-                        }
-                    }
-                }
-                
-                // Keep track of highest ID
-                if (matchup.id > maxId) {
-                    maxId = matchup.id;
-                }
-            });
-            
-            // Set next ID
-            nextMatchupId = maxId + 1;
-            
-            // Check submission status
-            checkSubmissionStatus();
-            
-            // If we've loaded completed brackets, auto-submit them
-            const allComplete = matchups.length > 0 && matchups.every(m => 
-                m.winner && m.method && m.round);
-            
-            if (allComplete) {
-                submitBracket();
-            }
-        }
-        
-        // Save username
-        function saveUsername() {
-            const usernameInput = document.getElementById('username').value.trim();
-            if (usernameInput) {
-                username = usernameInput;
-                document.getElementById('username-display').textContent = `Welcome, ${username}!`;
-                
-                // Save to localStorage
-                saveBracketToLocalStorage();
-            }
-        }
-        
-        // Add a new matchup to the table
-        function addMatchup() {
-            // Get fighter information
-            const fighterA = document.getElementById('fighter-a').value.trim();
-            const fighterB = document.getElementById('fighter-b').value.trim();
-            
-            // Validate inputs
-            if (!fighterA || !fighterB) {
-                alert('Please enter names for both fighters');
-                return;
-            }
-            
-            // Create the matchup data
-            const matchupId = nextMatchupId++;
-            const newMatchup = {
-                id: matchupId,
-                fighterA: {
-                    name: fighterA
-                },
-                fighterB: {
-                    name: fighterB
-                },
-                winner: null,
-                method: null,
-                round: null
-            };
-            
-            // Add to our matchups array
-            matchups.push(newMatchup);
-            
-            // Clear the no-data message if present
-            const noDataRow = document.querySelector('.no-data');
-            if (noDataRow) {
-                noDataRow.remove();
-            }
-            
-            // Add the row to the table
-            addMatchupRow(newMatchup);
-            
-            // Clear the input fields
-            document.getElementById('fighter-a').value = '';
-            document.getElementById('fighter-b').value = '';
-            
-            // Focus back on first field
-            document.getElementById('fighter-a').focus();
-            
-            // No longer saving to localStorage
-        }
-        
-        // Add a matchup row to the table
-        function addMatchupRow(matchup) {
-            const tbody = document.getElementById('brackets-body');
-            const row = document.createElement('tr');
-            row.setAttribute('data-matchup', matchup.id);
-            
-            row.innerHTML = `
-                <td>${matchup.id}</td>
-                <td>
-                    <div class="fighter-name">${matchup.fighterA.name}</div>
-                </td>
-                <td>
-                    <div class="fighter-name">${matchup.fighterB.name}</div>
-                </td>
-                <td>
-                    <div class="choice-buttons">
-                        <button class="btn" onclick="selectWinner(${matchup.id}, 'A')">A</button>
-                        <button class="btn" onclick="selectWinner(${matchup.id}, 'B')">B</button>
-                    </div>
-                </td>
-                <td>
-                    <select id="method-${matchup.id}" disabled onchange="updateSelection(${matchup.id})">
-                        <option value="">Method</option>
-                        <option value="KO">KO</option>
-                        <option value="TKO">TKO</option>
-                        <option value="SUB">Submission</option>
-                        <option value="DEC">Decision</option>
-                        <option value="DQ">DQ</option>
-                    </select>
-                </td>
-                <td>
-                    <select id="round-${matchup.id}" disabled onchange="updateSelection(${matchup.id})">
-                        <option value="">Round/Type</option>
-                        <option value="R1">Round 1</option>
-                        <option value="R2">Round 2</option>
-                        <option value="R3">Round 3</option>
-                        <option value="R4">Round 4</option>
-                        <option value="R5">Round 5</option>
-                        <option value="UD">Unanimous</option>
-                        <option value="SD">Split</option>
-                        <option value="MD">Majority</option>
-                    </select>
-                </td>
-                <td>
-                    <button class="remove-btn" onclick="removeMatchup(${matchup.id})">Remove</button>
-                </td>
-            `;
-            
-            tbody.appendChild(row);
-        }
-        
-        // Remove a matchup
-        function removeMatchup(matchupId) {
-            // Remove from the array
-            matchups = matchups.filter(m => m.id !== matchupId);
-            
-            // Remove from the table
-            const row = document.querySelector(`tr[data-matchup="${matchupId}"]`);
-            if (row) {
-                row.remove();
-            }
-            
-            // Add the "no data" message if no matchups remain
-            if (matchups.length === 0) {
-                const tbody = document.getElementById('brackets-body');
-                const noDataRow = document.createElement('tr');
-                noDataRow.className = 'no-data';
-                noDataRow.innerHTML = '<td colspan="7">No matchups added yet. Add fighters above to get started.</td>';
-                tbody.appendChild(noDataRow);
-                
-                // Disable submit button
-                document.getElementById('submitButton').disabled = true;
+
+        renderMatchup(newMatchup); // Add only the new matchup to the DOM
+
+        // Clear input fields
+        fighterAInput.value = '';
+        fighterBInput.value = '';
+        fighterAInput.focus(); // Set focus back to the first input
+
+        saveBracketToLocalStorage(); // Save after adding
+        checkSubmissionStatus(); // Update button states
+    } else {
+        showToast("Please enter names for both fighters.");
+    }
+ }
+
+ // Render all matchups (used on load)
+ function renderMatchups() {
+    const matchupsListDiv = document.getElementById('matchups-list');
+    matchupsListDiv.innerHTML = ''; // Clear existing list
+    matchups.forEach(matchup => renderMatchup(matchup));
+ }
+
+ // Render a single matchup element
+ function renderMatchup(matchup) {
+    const matchupsListDiv = document.getElementById('matchups-list');
+    const matchupDiv = document.createElement('div');
+    matchupDiv.className = 'matchup';
+    matchupDiv.id = `matchup-${matchup.id}`;
+    matchupDiv.innerHTML = `
+        <h3>Matchup ${matchup.id}: ${matchup.fighterA.name} vs ${matchup.fighterB.name}</h3>
+        <div class="fighter-selection">
+            <label>
+                <input type="radio" name="winner-${matchup.id}" value="A" onchange="updateWinner(${matchup.id}, 'A')" ${matchup.winner === 'A' ? 'checked' : ''}>
+                <span>${matchup.fighterA.name}</span>
+            </label>
+            <label>
+                <input type="radio" name="winner-${matchup.id}" value="B" onchange="updateWinner(${matchup.id}, 'B')" ${matchup.winner === 'B' ? 'checked' : ''}>
+                <span>${matchup.fighterB.name}</span>
+            </label>
+        </div>
+        <div class="selection-details">
+            <div>
+                <label for="method-${matchup.id}">Method:</label>
+                <select id="method-${matchup.id}" onchange="updateSelection(${matchup.id})">
+                    <option value="">-- Select Method --</option>
+                    <option value="KO" ${matchup.method === 'KO' ? 'selected' : ''}>Knockout</option>
+                    <option value="TKO" ${matchup.method === 'TKO' ? 'selected' : ''}>Technical Knockout</option>
+                    <option value="SUB" ${matchup.method === 'SUB' ? 'selected' : ''}>Submission</option>
+                    <option value="DEC" ${matchup.method === 'DEC' ? 'selected' : ''}>Decision</option>
+                    <option value="DQ" ${matchup.method === 'DQ' ? 'selected' : ''}>Disqualification</option>
+                </select>
+            </div>
+            <div>
+                <label for="round-${matchup.id}">Round/Details:</label>
+                <select id="round-${matchup.id}" onchange="updateSelection(${matchup.id})">
+                    <option value="">-- Select Details --</option>
+                    <option value="R1" ${matchup.round === 'R1' ? 'selected' : ''}>Round 1</option>
+                    <option value="R2" ${matchup.round === 'R2' ? 'selected' : ''}>Round 2</option>
+                    <option value="R3" ${matchup.round === 'R3' ? 'selected' : ''}>Round 3</option>
+                    <option value="R4" ${matchup.round === 'R4' ? 'selected' : ''}>Round 4</option>
+                    <option value="R5" ${matchup.round === 'R5' ? 'selected' : ''}>Round 5</option>
+                    <option value="UD" ${matchup.round === 'UD' ? 'selected' : ''}>Unanimous Decision</option>
+                    <option value="SD" ${matchup.round === 'SD' ? 'selected' : ''}>Split Decision</option>
+                    <option value="MD" ${matchup.round === 'MD' ? 'selected' : ''}>Majority Decision</option>
+                </select>
+            </div>
+        </div>
+    `;
+    matchupsListDiv.appendChild(matchupDiv);
+
+    // Initialize dropdown visibility based on loaded data
+    if (matchup.method) {
+        updateSelection(matchup.id); // This function handles showing/hiding options
+    }
+ }
+
+
+ // Update winner selection
+ function updateWinner(matchupId, winnerValue) {
+    const matchup = matchups.find(m => m.id === matchupId);
+    if (!matchup) return;
+
+    matchup.winner = winnerValue;
+
+    // Reset method and round if winner changes? Optional, depends on desired UX.
+    // For now, let's keep the selections unless explicitly changed.
+    // matchup.method = null;
+    // matchup.round = null;
+    // document.getElementById(`method-${matchupId}`).value = '';
+    // document.getElementById(`round-${matchupId}`).value = '';
+
+     // If method and round were previously set, keep them
+    if (!matchup.method) {
+         document.getElementById(`method-${matchupId}`).value = '';
+         document.getElementById(`round-${matchupId}`).value = '';
+    }
+
+
+    // Save changes
+    saveBracketToLocalStorage();
+    checkSubmissionStatus();
+ }
+
+ // Update method or round selection
+ function updateSelection(matchupId) {
+    const matchup = matchups.find(m => m.id === matchupId);
+    if (!matchup) return;
+
+    const methodEl = document.getElementById(`method-${matchupId}`);
+    const roundEl = document.getElementById(`round-${matchupId}`);
+
+    matchup.method = methodEl.value;
+    matchup.round = roundEl.value;
+
+    // Show/hide appropriate round options based on method
+    if (methodEl.value === "DEC") {
+        // Show only decision options
+        Array.from(roundEl.options).forEach(option => {
+            if (option.value === "" || option.value === "UD" || option.value === "SD" || option.value === "MD") {
+                option.style.display = "block";
             } else {
-                // Check submission status
-                checkSubmissionStatus();
+                option.style.display = "none";
             }
-            
-            // Save changes
-            saveBracketToLocalStorage();
+        });
+        // If current selection is a round, reset it
+        if (roundEl.value.startsWith("R")) {
+            roundEl.value = "";
+            matchup.round = "";
         }
-        
-        // Select winner for a matchup
-        function selectWinner(matchupId, fighter) {
-            // Find the matchup
-            const matchup = matchups.find(m => m.id === matchupId);
-            if (!matchup) return;
-            
-            // Get the row and buttons
-            const row = document.querySelector(`tr[data-matchup="${matchupId}"]`);
-            const buttons = row.querySelectorAll('.choice-buttons .btn');
-            
-            // Update UI
-            buttons.forEach((btn, index) => {
-                if ((index === 0 && fighter === 'A') || (index === 1 && fighter === 'B')) {
-                    btn.classList.add('selected');
-                } else {
-                    btn.classList.remove('selected');
-                }
-            });
-            
-            // Update data
-            matchup.winner = fighter;
-            
-            // Enable method and round selectors
-            document.getElementById(`method-${matchupId}`).disabled = false;
-            document.getElementById(`round-${matchupId}`).disabled = false;
-            
-            // If method and round were previously set, keep them
-            if (!matchup.method) {
-                document.getElementById(`method-${matchupId}`).value = '';
-                document.getElementById(`round-${matchupId}`).value = '';
-            }
-            
-            // Save changes
-            saveBracketToLocalStorage();
-            
-            checkSubmissionStatus();
-        }
-        
-        // Update method or round selection
-        function updateSelection(matchupId) {
-            const matchup = matchups.find(m => m.id === matchupId);
-            if (!matchup) return;
-            
-            const methodEl = document.getElementById(`method-${matchupId}`);
-            const roundEl = document.getElementById(`round-${matchupId}`);
-            
-            matchup.method = methodEl.value;
-            matchup.round = roundEl.value;
-            
-            // Show/hide appropriate round options based on method
-            if (methodEl.value === "DEC") {
-                // Show only decision options
-                Array.from(roundEl.options).forEach(option => {
-                    if (option.value === "" || option.value === "UD" || option.value === "SD" || option.value === "MD") {
-                        option.style.display = "block";
-                    } else {
-                        option.style.display = "none";
-                    }
-                });
-                
-                // If current selection is a round, reset it
-                if (roundEl.value.startsWith("R")) {
-                    roundEl.value = "";
-                    matchup.round = "";
-                }
-            } else if (methodEl.value !== "") {
-                // Show only round options
-                Array.from(roundEl.options).forEach(option => {
-                    if (option.value === "" || option.value.startsWith("R")) {
-                        option.style.display = "block";
-                    } else {
-                        option.style.display = "none";
-                    }
-                });
-                
-                // If current selection is a decision, reset it
-                if (["UD", "SD", "MD"].includes(roundEl.value)) {
-                    roundEl.value = "";
-                    matchup.round = "";
-                }
+    } else if (methodEl.value !== "") {
+        // Show only round options
+        Array.from(roundEl.options).forEach(option => {
+            if (option.value === "" || option.value.startsWith("R")) {
+                option.style.display = "block";
             } else {
-                // Show all options
-                Array.from(roundEl.options).forEach(option => {
-                    option.style.display = "block";
-                });
+                option.style.display = "none";
             }
-            
-            checkSubmissionStatus();
+        });
+        // If current selection is a decision, reset it
+        if (["UD", "SD", "MD"].includes(roundEl.value)) {
+             roundEl.value = "";
+             matchup.round = "";
         }
-        
-        // Check if all required fields are completed
-        function checkSubmissionStatus() {
-            let isComplete = matchups.length > 0;
-            
-            // Check if all matchups have complete data
-            for (const matchup of matchups) {
-                if (!matchup.winner || !matchup.method || !matchup.round) {
-                    isComplete = false;
-                    break;
-                }
-            }
-            
-            // Enable/disable buttons
-            document.getElementById('submitButton').disabled = !isComplete;
-            document.getElementById('saveButton').disabled = matchups.length === 0 || !isComplete;
-            document.getElementById('shareButton').disabled = !isComplete || !bracketSubmitted;
+    } else {
+        // Show all options
+        Array.from(roundEl.options).forEach(option => {
+            option.style.display = "block";
+        });
+    }
+
+
+    checkSubmissionStatus();
+ }
+
+
+ // Check if all required fields are completed
+ function checkSubmissionStatus() {
+    let isComplete = matchups.length > 0;
+
+    // Check if all matchups have complete data
+    for (const matchup of matchups) {
+        if (!matchup.winner || !matchup.method || !matchup.round) {
+            isComplete = false;
+            break;
         }
-        
-        // Save bracket as an image
-        function saveBracketToImage() {
-            // First make sure results are displayed
-            if (!bracketSubmitted) {
-                submitBracket();
-            }
-            
-            // Use html2canvas to capture the results section
-            const resultsSection = document.getElementById('results');
-            
-            // Add a temporary class to style for better image capture
-            resultsSection.classList.add('capture-mode');
-            
-            // Use html2canvas library to create an image
-            html2canvas(resultsSection).then(canvas => {
-                // Remove the temporary class
-                resultsSection.classList.remove('capture-mode');
-                
-                // Create download link
-                const link = document.createElement('a');
-                link.download = `UFC_Bracket_${username || 'Anonymous'}_${new Date().toISOString().split('T')[0]}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
-        }
-        
-        // Save bracket explicitly (when button is clicked)
-        function saveBracket() {
-            saveBracketToImage();
-            showToast("Downloading bracket as image...");
-            
-            // Show download message
-            document.getElementById('download-msg').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('download-msg').style.display = 'none';
-            }, 5000);
-        }
-        
-        // Create shareable URL
-        function shareBracket() {
-            // Create the data to encode in the URL
-            const shareData = {
-                username: username,
-                matchups: matchups
-            };
-            
-            // Encode the data
-            const encodedData = btoa(JSON.stringify(shareData));
-            const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
-            
-            // Show the URL in the share container
-            const shareContainer = document.getElementById('share-url-container');
-            const shareUrlInput = document.getElementById('share-url');
-            
-            shareUrlInput.value = shareUrl;
-            shareContainer.style.display = 'block';
-            
-            // Scroll to the container
-            shareContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Copy the share URL to clipboard
-        function copyShareUrl() {
-            const shareUrlInput = document.getElementById('share-url');
-            shareUrlInput.select();
-            document.execCommand('copy');
-            
-            // Show success toast
-            showToast("Link copied to clipboard!");
-        }
-        
-        // Show a toast message
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.display = 'block';
-            
-            // Hide after 3 seconds
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-        
-        // Submit the bracket
-        function submitBracket() {
-            // Mark as submitted
-            bracketSubmitted = true;
-            
-            // Show results section
-            const resultsDiv = document.getElementById('results');
-            const resultsContent = document.getElementById('results-content');
-            resultsDiv.style.display = 'block';
-            
-            // Gather results
-            let html = '';
-            
-            // Add username if available
-            if (username) {
-                html += `<div style="margin-bottom: 20px;"><strong>Bracket by:</strong> <span class="winner-info">${username}</span></div>`;
-            }
-            
-            html += '<table width="100%">';
-            html += '<tr><th>#</th><th>Matchup</th><th>Winner</th><th>Method</th><th>Details</th></tr>';
-            
-            matchups.forEach(matchup => {
-                const winnerName = matchup.winner === 'A' ? matchup.fighterA.name : matchup.fighterB.name;
-                const matchupText = `${matchup.fighterA.name} vs ${matchup.fighterB.name}`;
-                const method = getMethodText(matchup.method);
-                const round = getRoundText(matchup.round);
-                
-                html += `<tr>
-                    <td>${matchup.id}</td>
-                    <td>${matchupText}</td>
-                    <td class="winner-info">${winnerName}</td>
-                    <td>${method}</td>
-                    <td>${round}</td>
-                </tr>`;
-            });
-            
-            html += '</table>';
-            
-            resultsContent.innerHTML = html;
-            
-            // Enable the share button now that the bracket is submitted
-            document.getElementById('shareButton').disabled = false;
-            
-            // Scroll to results
-            resultsDiv.scrollIntoView({ behavior: 'smooth' });
-            
-            // No longer saving to localStorage
-        }
-        
-        // Helper function to get readable method text
-        function getMethodText(code) {
-            const methods = {
-                'KO': 'Knockout',
-                'TKO': 'Technical Knockout',
-                'SUB': 'Submission',
-                'DEC': 'Decision',
-                'DQ': 'Disqualification'
-            };
-            return methods[code] || code;
-        }
-        
-        // Helper function to get readable round text
-        function getRoundText(code) {
-            if (code.startsWith('R')) {
-                return `Round ${code.substring(1)}`;
-            }
-            
-            const decisions = {
-                'UD': 'Unanimous Decision',
-                'SD': 'Split Decision',
-                'MD': 'Majority Decision'
-            };
-            return decisions[code] || code;
-        }
-    </script>
+    }
+
+    // Enable/disable buttons
+    document.getElementById('submitButton').disabled = !isComplete;
+    document.getElementById('saveButton').disabled = matchups.length === 0 || !isComplete;
+    document.getElementById('shareButton').disabled = !isComplete || !bracketSubmitted;
+ }
+
+ // Save bracket as an image
+ function saveBracketToImage() {
+    // First make sure results are displayed
+    if (!bracketSubmitted) {
+        submitBracket();
+    }
+
+    // Use html2canvas to capture the results section
+    const resultsSection = document.getElementById('results');
+
+    // Add a temporary class to style for better image capture
+    resultsSection.classList.add('capture-mode');
+
+    // Use html2canvas library to create an image
+    html2canvas(resultsSection).then(canvas => {
+        // Remove the temporary class
+        resultsSection.classList.remove('capture-mode');
+
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `UFC_Bracket_${username || 'Anonymous'}_${new Date().toISOString().split('T')[0]}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+ }
+
+ // Save bracket explicitly (when button is clicked)
+ function saveBracket() {
+    saveBracketToImage();
+    showToast("Downloading bracket as image...");
+    // Show download message
+    document.getElementById('download-msg').style.display = 'block';
+    setTimeout(() => {
+        document.getElementById('download-msg').style.display = 'none';
+    }, 5000);
+ }
+
+ // Create shareable URL
+ function shareBracket() {
+    // Create the data to encode in the URL
+    const shareData = {
+        username: username,
+        matchups: matchups
+    };
+    // Encode the data
+    const encodedData = btoa(JSON.stringify(shareData));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
+
+    // Show the URL in the share container
+    const shareContainer = document.getElementById('share-url-container');
+    const shareUrlInput = document.getElementById('share-url');
+    shareUrlInput.value = shareUrl;
+    shareContainer.style.display = 'block';
+
+    // Scroll to the container
+    shareContainer.scrollIntoView({ behavior: 'smooth' });
+ }
+
+
+ // Copy the share URL to clipboard
+ function copyShareUrl() {
+    const shareUrlInput = document.getElementById('share-url');
+    shareUrlInput.select();
+    document.execCommand('copy');
+    // Show success toast
+    showToast("Link copied to clipboard!");
+ }
+
+
+ // Show a toast message
+ function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.display = 'block';
+    // Hide after 3 seconds
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000);
+ }
+
+ // Submit the bracket
+ function submitBracket() {
+    // Mark as submitted
+    bracketSubmitted = true;
+
+    // Show results section
+    const resultsDiv = document.getElementById('results');
+    const resultsContent = document.getElementById('results-content');
+    resultsDiv.style.display = 'block';
+
+    // Gather results
+    let html = '';
+
+    // Add username if available
+    if (username) {
+        html += `<div style="margin-bottom: 20px;"><strong>Bracket by:</strong> <span class="winner-info">${username}</span></div>`;
+    }
+
+    html += '<table width="100%">';
+    html += '<tr><th>#</th><th>Matchup</th><th>Winner</th><th>Method</th><th>Details</th></tr>';
+
+    matchups.forEach(matchup => {
+        const winnerName = matchup.winner === 'A' ? matchup.fighterA.name : matchup.fighterB.name;
+        const matchupText = `${matchup.fighterA.name} vs ${matchup.fighterB.name}`;
+        const method = getMethodText(matchup.method);
+        const round = getRoundText(matchup.round);
+
+        html += `<tr>
+            <td>${matchup.id}</td>
+            <td>${matchupText}</td>
+            <td class="winner-info">${winnerName}</td>
+            <td>${method}</td>
+            <td>${round}</td>
+        </tr>`;
+    });
+
+    html += '</table>';
+    resultsContent.innerHTML = html;
+
+    // Enable the share button now that the bracket is submitted
+    document.getElementById('shareButton').disabled = false;
+
+    // Scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth' });
+
+    // No longer saving to localStorage
+    // saveBracketToLocalStorage(); // Save the submitted state
+ }
+
+// Helper function to get readable method text
+function getMethodText(code) {
+    const methods = {
+        'KO': 'Knockout',
+        'TKO': 'Technical Knockout',
+        'SUB': 'Submission',
+        'DEC': 'Decision',
+        'DQ': 'Disqualification'
+    };
+    return methods[code] || code;
+}
+
+// Helper function to get readable round text
+function getRoundText(code) {
+    if (code.startsWith('R')) {
+        return `Round ${code.substring(1)}`;
+    }
+    const decisions = {
+        'UD': 'Unanimous Decision',
+        'SD': 'Split Decision',
+        'MD': 'Majority Decision'
+    };
+    return decisions[code] || code;
+}
+
+
+</script>
+
 </body>
-</html>
+</html> 
